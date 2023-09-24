@@ -1,7 +1,7 @@
 '''book_service.py'''
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from config import MONGO_URI, DATABASE_NAME, COLLECTION_NAME
+from config import MONGO_URI, DATABASE_NAME, COLLECTION_NAME, REQUIRED_FIELDS
 
 client = MongoClient(MONGO_URI)
 db = client[DATABASE_NAME]
@@ -58,18 +58,6 @@ def add_book(book_data):
     except Exception as e:
         raise DatabaseError(f"Error adding new book: {str(e)}") from e
 
-REQUIRED_FIELDS = [
-    "ean_isbn13",
-    "title",
-    "creators",
-    "firstName",
-    "lastName",
-    "description",
-    "publisher",
-    "publishDate",
-    "price",
-    "length"
-]
 
 def validate_book_data(book_data):
     """Validate the incoming book data."""
@@ -81,3 +69,23 @@ def validate_book_data(book_data):
         raise ValueError(f"Missing required fields: {', '.join(missing_fields)}")
 
     # Add more validation if needed, like type checks or content checks
+
+
+def update_book_by_isbn(isbn, updated_data):
+    """Update a book in the collection based on its ISBN."""
+    try:
+        # Check for the number of books with the given ISBN
+        count = collection.count_documents({"ean_isbn13": isbn})
+
+        if count == 0:
+            raise ValueError(f"No book found with ISBN {isbn}.")
+        elif count > 1:
+            raise ValueError(f"Multiple books found with ISBN {isbn}. Update aborted.")
+
+        # Update the book data
+        collection.update_one({"ean_isbn13": isbn}, {"$set": updated_data})
+
+        return collection.find_one({"ean_isbn13": isbn})
+
+    except Exception as e:
+        raise DatabaseError(f"Error updating book with ISBN {isbn}: {str(e)}") from e
