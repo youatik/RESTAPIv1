@@ -13,7 +13,15 @@ class DatabaseError(Exception):
 # ... Other imports and setup ...
 
 def get_all_books():
-    """Retrieve all books from the collection."""
+    """
+    Retrieve all books
+    ---
+    responses:
+        200:
+            description: List of all books
+        400:
+            description: Database error
+    """
     try:
         books_cursor = collection.find({})
         books = list(books_cursor)
