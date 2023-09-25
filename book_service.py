@@ -1,7 +1,6 @@
 # book_service.py
 
 from pymongo import MongoClient
-from bson.objectid import ObjectId
 from config import MONGO_URI, DATABASE_NAME, COLLECTION_NAME, REQUIRED_FIELDS
 
 client = MongoClient(MONGO_URI)
@@ -117,6 +116,74 @@ def ensure_text_index():
         ("description", "text"),
         ("publisher", "text")
     ])
+
+def search_books(query):
+    """Search for books based on a text query."""
+    try:
+        books_cursor = collection.find({
+            "$text": {
+                "$search": query
+            }
+        })
+        books = list(books_cursor)
+
+        # Convert ObjectId to string for serialization
+        for book in books:
+            book["_id"] = str(book["_id"])
+
+            # Convert ean_isbn13 to integer, if it exists and is a float
+            if "ean_isbn13" in book and isinstance(book["ean_isbn13"], float):
+                book["ean_isbn13"] = int(book["ean_isbn13"])
+
+        return books
+
+    except Exception as e:
+        raise DatabaseError(f"Error searching for books: {str(e)}") from e
+
+
+def get_books_by_author(author_name):
+    """Retrieve books from the collection written by a specific author."""
+    try:
+        # Splitting the author_name on spaces
+        name_parts = author_name.split()
+
+        # Creating regex search criteria for each part
+        search_criteria = [{"creators": {"$regex": part, "$options": 'i'}} for part in name_parts]
+
+        # Using the $and operator to ensure all parts are present
+        books_cursor = collection.find({
+            "$and": search_criteria
+        })
+
+        books = list(books_cursor)
+
+        # Convert ObjectId to string for serialization
+        for book in books:
+            book["_id"] = str(book["_id"])
+
+        return books
+
+    except Exception as e:
+        raise DatabaseError(f"Error fetching books by author {author_name}: {str(e)}") from e
+
+
+def get_random_book():
+    """Retrieve a random book from the collection."""
+    try:
+        books_cursor = collection.aggregate([
+            {"$sample": {"size": 1}}
+        ])
+        book = next(books_cursor, None)
+
+        if book:
+            # Convert ObjectId to string for serialization
+            book["_id"] = str(book["_id"])
+
+        return book
+
+    except Exception as e:
+        raise DatabaseError(f"Error fetching a random book: {str(e)}") from e
+
 
 def initialize_db():
     """Initialize the database with required indexes and other setup."""
