@@ -1,4 +1,5 @@
-'''book_service.py'''
+# book_service.py
+
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from config import MONGO_URI, DATABASE_NAME, COLLECTION_NAME, REQUIRED_FIELDS
@@ -89,3 +90,35 @@ def update_book_by_isbn(isbn, updated_data):
 
     except Exception as e:
         raise DatabaseError(f"Error updating book with ISBN {isbn}: {str(e)}") from e
+
+def delete_book_by_isbn(isbn):
+    """Delete a book from the collection based on its ISBN."""
+    try:
+        result = collection.delete_one({"ean_isbn13": isbn})
+
+        # The 'deleted_count' attribute indicates how many documents were deleted
+        if result.deleted_count == 1:
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        raise DatabaseError(f"Error deleting book with ISBN {isbn}: {str(e)}") from e
+
+
+def ensure_text_index():
+    """Ensure the text index exists for searching."""
+    collection.create_index([
+        ("ean_isbn13", "text"),
+        ("title", "text"),
+        ("creators", "text"),
+        ("firstName", "text"),
+        ("lastName", "text"),
+        ("description", "text"),
+        ("publisher", "text")
+    ])
+
+def initialize_db():
+    """Initialize the database with required indexes and other setup."""
+    ensure_text_index()
+    # Any other DB setup can go here
