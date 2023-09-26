@@ -1,0 +1,43 @@
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        _id:
+          type: object
+          properties:
+            $oid:
+              type: string
+        ean_isbn13:
+          type: integer
+          description: EAN ISBN13 code of the book
+        title:
+          type: string
+          description: Title of the book
+        creators:
+          type: string
+          description: Comma-separated list of book creators
+        firstName:
+          type: string
+          description: First name of the primary creator
+        lastName:
+          type: string
+          description: Last name of the primary creator
+        description:
+          type: string
+          description: Description of the book
+        publisher:
+          type: string
+          description: Publisher of the book
+        publishDate:
+          type: string
+          format: date
+          description: Publish date of the book (in the format "YYYY-MM-DD")
+        price:
+          type: number
+          format: float
+          description: Price of the book
+        length:
+          type: integer
+          format: int32
+          description: Length or number of pages in the book

@@ -1,11 +1,6 @@
 # main.py
-from flask import Flask
-from book_service import initialize_db
-
-app = Flask(__name__)
-initialize_db()
-
-from flask import Blueprint, jsonify, request
+from flask import Flask, jsonify, request
+from flasgger import Swagger
 from book_service import (
     get_book_by_isbn,
     validate_book_data,
@@ -16,41 +11,25 @@ from book_service import (
     delete_book_by_isbn,
     search_books,
     get_books_by_author,
-    get_random_book
+    get_random_book,
+    initialize_db
 )
 
-
-
-from flask import Flask, request, jsonify
-
-from book_service import initialize_db
-
-from flask import Flask, jsonify, request
-from flasgger import Swagger
-from book_service import initialize_db
-
-
-from flask import Flask
-from book_service import initialize_db
-from flasgger import Swagger
-
-
 app = Flask(__name__)
-swagger = Swagger(app)  # Initialize Flasgger with your Flask app
 initialize_db()
+#swagger = Swagger(app)  # Initialize Flasgger with your Flask app
+
+from flasgger import Swagger
+app = Flask(__name__)
+
+# Setup flasgger with external YAML
+swagger = Swagger(app, template_file='books_api.yml')
+
+
+
+
 @app.route('/books', methods=['GET'])
 def get_books_route():
-    """
-    Retrieve all books
-    ---
-    tags:
-      - Books
-    responses:
-      200:
-        description: List of all books
-      400:
-        description: Database error
-    """
     try:
         books = get_all_books()
         return jsonify(books)
@@ -60,25 +39,7 @@ def get_books_route():
 
 @app.route('/books/isbn/<int:isbn>', methods=['GET'])
 def get_book_route(isbn):
-    """
-        Retrieve a book by its ISBN number
-        ---
-        tags:
-          - Books
-        parameters:
-          - name: isbn
-            in: path
-            type: integer
-            required: true
-            description: ISBN number of the book
-        responses:
-          200:
-            description: Returns the book with the specified ISBN
-          404:
-            description: Book not found
-          400:
-            description: Invalid input or other errors
-        """
+
     try:
         book = get_book_by_isbn(isbn)
         if not book:
@@ -95,10 +56,8 @@ def add_book_route():
         validate_book_data(book_data)  # Validate before saving
         new_book_id = add_book(book_data)
         return jsonify({"message": "Book added successfully", "_id": new_book_id}), 201
-
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 400
-
     except DatabaseError as de:
         return jsonify({"error": str(de)}), 400
 

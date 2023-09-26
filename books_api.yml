@@ -1,0 +1,115 @@
+openapi: 3.1.0
+info:
+  title: My API
+  version: 1.0.0
+
+paths:
+  /books:
+    get:
+      tags:
+        - Books
+      responses:
+        '200':
+          description: List of all books
+        '400':
+          description: Database error
+    post:
+      tags:
+        - Books
+      summary: Add a new book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '201':
+          description: Book added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  _id:
+                    type: string
+        '400':
+          description: Bad request (invalid book data or database error)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+
+
+
+
+  /books/isbn/{isbn}:
+    get:
+      tags:
+        - Books
+      parameters:
+        - name: isbn
+          in: path
+          type: integer
+          required: true
+          description: ISBN number of the book
+      responses:
+        '200':
+          description: Returns the book with the specified ISBN
+        '404':
+          description: Book not found
+        '400':
+          description: Invalid input or other errors
+
+
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        _id:
+          type: object
+          properties:
+            $oid:
+              type: string
+        ean_isbn13:
+          type: integer
+          description: EAN ISBN13 code of the book
+        title:
+          type: string
+          description: Title of the book
+        creators:
+          type: string
+          description: Comma-separated list of book creators
+        firstName:
+          type: string
+          description: First name of the primary creator
+        lastName:
+          type: string
+          description: Last name of the primary creator
+        description:
+          type: string
+          description: Description of the book
+        publisher:
+          type: string
+          description: Publisher of the book
+        publishDate:
+          type: string
+          format: date
+          description: Publish date of the book (in the format "YYYY-MM-DD")
+        price:
+          type: number
+          format: float
+          description: Price of the book
+        length:
+          type: integer
+          format: int32
+          description: Length or number of pages in the book
+
+
