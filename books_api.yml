@@ -15,7 +15,7 @@ paths:
         '400':
           description: Database error
     post:
-      operationId: main.get_book_route
+      operationId: main.add_book_route
       tags:
         - Books
       summary: Add a new book
@@ -46,12 +46,142 @@ paths:
                 properties:
                   error:
                     type: string
-
-
-
-
-
-
+  /books/isbn/{isbn}:
+    get:
+      operationId: main.get_book_route
+      tags:
+        - Books
+      parameters:
+        - in: path
+          name: isbn
+          schema:
+            type: integer
+          required: true
+          description: ISBN of the book
+      responses:
+        '200':
+          description: Book data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Book not found
+    put:
+      operationId: main.update_book_route
+      tags:
+        - Books
+      parameters:
+        - in: path
+          name: isbn
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: Updated book data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Bad request
+        '404':
+          description: Book not found
+    delete:
+      operationId: main.delete_book_route
+      tags:
+        - Books
+      parameters:
+        - in: path
+          name: isbn
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Book deleted successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Book not found
+  /books/search:
+    get:
+      operationId: main.search_books_route
+      tags:
+        - Books
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: false
+          description: Query for searching books
+      responses:
+        '200':
+          description: List of matching books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '400':
+          description: Database error
+  /books/author/{author_name}:
+    get:
+      operationId: main.get_books_by_author_route
+      tags:
+        - Books
+      parameters:
+        - in: path
+          name: author_name
+          schema:
+            type: string
+          required: true
+          description: Author's name
+      responses:
+        '200':
+          description: List of books by the specified author
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '400':
+          description: Database error
+  /books/random:
+    get:
+      operationId: main.get_random_book_route
+      tags:
+        - Books
+      responses:
+        '200':
+          description: A random book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Database error
+        '404':
+          description: No books available
 
 components:
   schemas:
@@ -96,5 +226,3 @@ components:
           type: integer
           format: int32
           description: Length or number of pages in the book
-
-
