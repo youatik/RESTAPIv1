@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.2
 info:
   title: My API
   version: 1.0.0
@@ -6,6 +6,7 @@ info:
 paths:
   /books:
     get:
+      operationId: main.get_books_route
       tags:
         - Books
       responses:
@@ -14,6 +15,7 @@ paths:
         '400':
           description: Database error
     post:
+      operationId: main.get_book_route
       tags:
         - Books
       summary: Add a new book
@@ -49,23 +51,6 @@ paths:
 
 
 
-  /books/isbn/{isbn}:
-    get:
-      tags:
-        - Books
-      parameters:
-        - name: isbn
-          in: path
-          type: integer
-          required: true
-          description: ISBN number of the book
-      responses:
-        '200':
-          description: Returns the book with the specified ISBN
-        '404':
-          description: Book not found
-        '400':
-          description: Invalid input or other errors
 
 
 components:

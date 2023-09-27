@@ -1,4 +1,7 @@
 # main.py
+
+import connexion
+
 from flask import Flask, jsonify, request
 from flasgger import Swagger
 from book_service import (
@@ -15,15 +18,18 @@ from book_service import (
     initialize_db
 )
 
-app = Flask(__name__)
+#app = Flask(__name__)
 initialize_db()
 #swagger = Swagger(app)  # Initialize Flasgger with your Flask app
 
 from flasgger import Swagger
-app = Flask(__name__)
+#app = Flask(__name__)
+
 
 # Setup flasgger with external YAML
-swagger = Swagger(app, template_file='books_api.yml')
+#swagger = Swagger(app, template_file='books_api.yml')
+
+app = connexion.App(__name__)
 
 
 
@@ -117,8 +123,8 @@ def get_random_book_route():
         return jsonify({"error": str(de)}), 400
 
 
-
+app.add_api('books_api.yml')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5001, debug=True)
