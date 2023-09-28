@@ -1,4 +1,5 @@
 # config.py
+PORT = 5001
 # MongoDB configuration
 MONGO_URI = "mongodb://localhost:27017/"
 DATABASE_NAME = "A17"

@@ -1,9 +1,8 @@
 # main.py
 
 import connexion
-
+from config import PORT
 from flask import Flask, jsonify, request
-from flasgger import Swagger
 from book_service import (
     get_book_by_isbn,
     validate_book_data,
@@ -18,17 +17,7 @@ from book_service import (
     initialize_db
 )
 
-#app = Flask(__name__)
 initialize_db()
-#swagger = Swagger(app)  # Initialize Flasgger with your Flask app
-
-from flasgger import Swagger
-#app = Flask(__name__)
-
-
-# Setup flasgger with external YAML
-#swagger = Swagger(app, template_file='books_api.yml')
-
 app = connexion.App(__name__)
 
 
@@ -127,4 +116,4 @@ app.add_api('books_api.yml')
 
 
 if __name__ == '__main__':
-    app.run(port=5001, debug=True)
+    app.run(port=PORT, debug=True)
