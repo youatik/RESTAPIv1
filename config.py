@@ -1,5 +1,6 @@
 # config.py
 PORT = 5001
+PROXY_PORT = 5002   # new port for the proxy API
 # MongoDB configuration
 MONGO_URI = "mongodb://localhost:27017/"
 DATABASE_NAME = "A17"
