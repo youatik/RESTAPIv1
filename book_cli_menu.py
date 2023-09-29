@@ -24,28 +24,47 @@ def main():
         choice = display_menu()
 
         if choice == "1":
-            books = get_all_books()
-            print(json.dumps(books, indent=4))
+            try:
+                books = get_all_books()
+                print(json.dumps(books, indent=4))
+            except Exception as e:
+                print(f"Error: {str(e)}")
+
         elif choice == "2":
             isbn = input("Enter the ISBN of the book: ")
-            book = get_book_by_isbn(isbn)
-            if book:
-                print(json.dumps(book, indent=4))
-            else:
-                print(f"No book found with ISBN {isbn}.")
+            try:
+                book = get_book_by_isbn(int(isbn))
+                if book:
+                    print(json.dumps(book, indent=4))
+                else:
+                    print(f"No book found with ISBN {isbn}.")
+            except Exception as e:
+                print(f"Error: {str(e)}")
+
         elif choice == "3":
             book_data_str = input("Enter the book data in JSON format: ")
-            book_data = json.loads(book_data_str)
-            validate_book_data(book_data)
-            book_id = add_book(book_data)
-            print(f"Added book with ID: {book_id}")
+            try:
+                book_data = json.loads(book_data_str)
+                book_id = add_book(book_data)
+                print(f"Added book with ID: {book_id}")
+            except Exception as e:
+                print(f"Error: {str(e)}")
+
         elif choice == "4":
             query = input("Enter your search query: ")
-            books = search_books(query)
-            print(json.dumps(books, indent=4))
+            try:
+                books = search_books(query)
+                print(json.dumps(books, indent=4))
+            except Exception as e:
+                print(f"Error: {str(e)}")
+
         elif choice == "5":
-            book = get_random_book()
-            print(json.dumps(book, indent=4))
+            try:
+                book = get_random_book()
+                print(json.dumps(book, indent=4))
+            except Exception as e:
+                print(f"Error: {str(e)}")
+
         elif choice == "0":
             print("Exiting...")
             break
