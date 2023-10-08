@@ -11,7 +11,6 @@ def display_menu():
     print("1. Get all books")
     print("2. Get a book by ISBN")
     print("3. Add a book")
-    # Add other functions as needed...
     print("4. Search for books")
     print("5. Get a random book")
     print("0. Exit")
