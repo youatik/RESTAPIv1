@@ -14,16 +14,16 @@ from book_logic import (
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 from flask import jsonify, request
 
-# Initialize database
+# Initialiser la database
 initialize_db()
 
-# Create a Connexion application instance
+# Creer la Connexion application en instance
 connexion_app = connexion.App(__name__)
 
-# Get the underlying Flask app instance from Connexion app
+# Obtenir la Flask app instance du Connexion app
 app = connexion_app.app
 
-# Configure JWT
+# Configurer le JWT
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 jwt = JWTManager(app)
 
@@ -77,7 +77,7 @@ def get_books_by_author_route(author_name):
 def get_random_book_route():
     return get_random_book_logic()
 
-# Connect the Swagger YAML file
+# Connecter Swagger au YAML
 connexion_app.add_api('books_api.yml')
 
 if __name__ == '__main__':

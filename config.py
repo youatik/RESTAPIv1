@@ -1,10 +1,10 @@
 # config.py
 
-# ports for the API and proxy API
+# ports API et proxy API
 PORT = 5001
 PROXY_PORT = 5002
 
-# jwt key and secret
+# jwt key et secret
 JWT_SECRET_KEY = "some_secret_key_here"
 SHARED_SECRET = "your_shared_secret_here"
 

@@ -1,17 +1,13 @@
 from flask import Flask, Response, jsonify
 import requests
-import config  # Import the config file
-from flask_jwt_extended import JWTManager, create_access_token
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+import config  # Import le fichier config
 from flask_jwt_extended import JWTManager
 from flask import request
 
 
-
-
 app = Flask(__name__)
 
-BASE_URL = f"http://localhost:{config.PORT}"  # Reading the main API port from config
+BASE_URL = f"http://localhost:{config.PORT}"
 app.config["JWT_SECRET_KEY"] = config.JWT_SECRET_KEY
 jwt = JWTManager(app)
 
@@ -28,6 +24,10 @@ def get_token():
         token = data.get('access_token')
     return token
 
+# Obtenir un token automatiquement en debut de session
+
+get_token()
+
 @app.route('/<path:path>', methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def proxy(path):
     access_token = get_token()
@@ -35,12 +35,17 @@ def proxy(path):
         "Authorization": f"Bearer {access_token}"
     }
 
-    # Get the original request data and headers
+    # Obtenir le request data et les headers
     original_headers = {key: value for (key, value) in request.headers}
-    headers.update(original_headers)
+
+    # Donner au JWT token la precedence
+    original_headers["Authorization"] = f"Bearer {access_token}"
+    headers = original_headers
+
+    # Capturer le body et le content de l'incoming request
     data = request.data
 
-    # Forward the request to the main API
+    # Forwarder la request au base API
     response = requests.request(
         method=request.method,
         url=f"{BASE_URL}/{path}",
@@ -48,8 +53,9 @@ def proxy(path):
         data=data
     )
 
-    # Return the response from the main API
+    # Retourner la response du base API
     return Response(response.content, response.status_code, response.headers.items())
 
+
 if __name__ == '__main__':
-    app.run(port=config.PROXY_PORT, debug=True)  # Reading the proxy API port from config
+    app.run(port=config.PROXY_PORT, debug=True)  # PORT proxy API du config

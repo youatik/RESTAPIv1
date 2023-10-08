@@ -1,18 +1,18 @@
 import json
 import requests
-from config import PORT
+from config import PROXY_PORT
 
-BASE_URL = f"http://127.0.0.1:{PORT}"
+BASE_URL = f"http://127.0.0.1:{PROXY_PORT}"
 
 def display_menu():
-    print("\n----- Book Service CLI -----")
-    print("1. Get all books")
-    print("2. Get a book by ISBN")
-    print("3. Add a book")
-    print("4. Search for books")
-    print("5. Get a random book")
-    print("0. Exit")
-    choice = input("\nSelect an option: ")
+    print("\n----- CLI du service de livres -----")
+    print("1. Obtenir tous les livres")
+    print("2. Obtenir un livre par ISBN")
+    print("3. Ajouter un livre")
+    print("4. Rechercher des livres")
+    print("5. Obtenir un livre aléatoire")
+    print("0. Quitter")
+    choice = input("\nSélectionnez une option: ")
     return choice
 
 def main():
@@ -25,26 +25,26 @@ def main():
             print(json.dumps(books, indent=4))
 
         elif choice == "2":
-            isbn = input("Enter the ISBN of the book: ")
+            isbn = input("Entrez l'ISBN du livre: ")
             response = requests.get(f"{BASE_URL}/books/isbn/{isbn}")
             if response.status_code == 200:
                 book = response.json()
                 print(json.dumps(book, indent=4))
             else:
-                print(f"No book found with ISBN {isbn}.")
+                print(f"Aucun livre trouvé avec l'ISBN {isbn}.")
 
         elif choice == "3":
-            book_data_str = input("Enter the book data in JSON format: ")
+            book_data_str = input("Entrez les données du livre au format JSON: ")
             book_data = json.loads(book_data_str)
             response = requests.post(f"{BASE_URL}/books", json=book_data)
             if response.status_code == 201:
                 book_id = response.json().get('_id')
-                print(f"Added book with ID: {book_id}")
+                print(f"Livre ajouté avec l'ID: {book_id}")
             else:
-                print("Error adding the book:", response.json().get('error'))
+                print("Erreur lors de l'ajout du livre:", response.json().get('error'))
 
         elif choice == "4":
-            query = input("Enter your search query: ")
+            query = input("Entrez votre requête de recherche: ")
             response = requests.get(f"{BASE_URL}/books/search", params={'q': query})
             books = response.json()
             print(json.dumps(books, indent=4))
@@ -55,10 +55,10 @@ def main():
             print(json.dumps(book, indent=4))
 
         elif choice == "0":
-            print("Exiting...")
+            print("Sortie...")
             break
         else:
-            print("Invalid choice. Please try again.")
+            print("Choix invalide. Veuillez réessayer.")
 
 if __name__ == "__main__":
     main()
